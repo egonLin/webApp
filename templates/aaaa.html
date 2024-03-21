@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Document</title>
+    <script>
+        window.onload = function() {
+            document.getElementById('queryButton').addEventListener('click', function (event) {
+                event.preventDefault(); // 阻止链接默认行为
+
+                var httpRequest = new XMLHttpRequest(); // 创建新的HTTP请求
+
+                httpRequest.onreadystatechange = function () {
+                    // 处理服务器响应
+                    if (httpRequest.readyState === XMLHttpRequest.DONE) {
+                        if (httpRequest.status === 200) {
+                            // 解析服务器返回的数据
+                            var data = JSON.parse(httpRequest.responseText);
+
+                            // 将数据添加到列表中
+                            var list = document.getElementById('messageList');
+                            list.innerHTML = ''; // 清空列表
+
+                            data.forEach(function (item) {
+                                var li = document.createElement('li');
+                                li.textContent = "ID：" + item[0] + "， 内容：" + item[1];
+                                list.appendChild(li);
+                            });
+                        } else {
+                            // 处理请求失败
+                            alert('服务器请求失败：' + httpRequest.status);
+                        }
+                    }
+                };
+
+                // 发送请求到服务器
+                httpRequest.open('GET', '/api/messages', true);
+                httpRequest.send();
+            });
+        };
+    </script>
+</head>
+<body>
+    <h1>你好</h1>
+
+    <form method="POST">
+        <input type="text" name="content" required>
+        <button type="submit" onclick="event.preventDefault();">提交</button>
+    </form>
+
+    <button id="queryButton">查询</button>
+    <ul id="messageList">
+        <!-- 通过JavaScript填充列表 -->
+    </ul>
+</body>
+</html>
